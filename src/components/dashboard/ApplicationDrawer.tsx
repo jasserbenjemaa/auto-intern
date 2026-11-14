@@ -19,94 +19,85 @@ export function ApplicationDrawer({
   onClose,
   onSendApplication,
 }: ApplicationDrawerProps) {
-  // Navigation step in the drawer: "materials" (CV & Cover Letter) or "email" (Done -> Email Preview)
   const [currentStep, setCurrentStep] = useState<"materials" | "email">("materials");
   const [activeTab, setActiveTab] = useState<"cv" | "cover_letter">("cv");
 
-  // User choice: what to send (CV, Cover Letter, or Both)
   const [sendCV, setSendCV] = useState(true);
   const [sendCoverLetter, setSendCoverLetter] = useState(true);
-
-  // Email copy state
   const [copiedEmail, setCopiedEmail] = useState(false);
 
   if (!isOpen || selectedInternships.length === 0) return null;
 
-  // Extract company and role details
   const primaryItem = selectedInternships[0];
   const companyName = primaryItem.company.name;
   const roleTitle = primaryItem.internship.titre;
   const location = primaryItem.internship.localisation;
   const duration = primaryItem.internship.duree;
 
-  // Extract unique technologies across all selected internships
   const allTechs = Array.from(
     new Set(selectedInternships.flatMap((item) => item.internship.technologies))
   );
 
-  // Recruiter contact email mapping
-  const companyEmail = `${companyName.toLowerCase().replace(/\s+/g, "")}-recrutement-pfe@${companyName.toLowerCase().replace(/\s+/g, "")}.com`;
-  const emailSubject = `Candidature Stage PFE (${duration}) — Alexandre Dupont — ${roleTitle}`;
+  const companyEmail = `${companyName.toLowerCase().replace(/\s+/g, "")}-careers@${companyName.toLowerCase().replace(/\s+/g, "")}.com`;
+  const emailSubject = `Graduation Internship Application (${duration}) — Alex Dupont — ${roleTitle}`;
 
-  // Formatted Tailored Cover Letter
-  const coverLetterText = `Alexandre Dupont
-Élève-Ingénieur en Informatique — Promotion 2026
-alexandre.dupont@insa.fr | +33 6 12 34 56 78
-Paris, France
+  const coverLetterText = `Alex Dupont
+Software Engineering Student — Class of 2026
+alex.dupont@university.edu | +1 (555) 019-2834
+San Francisco, CA / Paris, France
 
-À l'attention de l'équipe Recrutement Technique & Tuteurs PFE
+To the attention of the Engineering Hiring Team & Internship Mentors
 ${companyName} — ${location}
 
-Objet : ${emailSubject}
+Subject: ${emailSubject}
 
-Madame, Monsieur,
+Dear Hiring Team,
 
-Actuellement en dernière année d'école d'ingénieur en informatique (Bac+5), je prépare mon stage de fin d'études (PFE) d'une durée de ${duration}. Suivant avec grand intérêt les innovations de ${companyName}, je vous adresse ma candidature pour l'opportunité de stage : "${roleTitle}".
+Currently completing my final year of engineering studies in Computer Science, I am seeking a graduation internship (PFE) for a duration of ${duration}. Following ${companyName}'s impactful engineering work with great enthusiasm, I am excited to submit my application for the role: "${roleTitle}".
 
-Mes projets académiques et personnels m'ont permis de développer une solide maîtrise des environnements ${allTechs.slice(0, 4).join(", ")}. Passionné par les défis de scalabilité et la conception de code maintenable, j'ai notamment conçu et déployé un pipeline distribué à haute vélocité en temps réel, optimisant la consommation mémoire et la latence sous forte charge.
+Through academic and production projects, I have developed strong proficiency in ${allTechs.slice(0, 4).join(", ")}. Passionate about scalability, low-latency architectures, and clean code, I recently built and benchmarked a distributed real-time pipeline that optimized memory footprint and processing latency under heavy loads.
 
-La mission proposée — "${primaryItem.internship.mission_principale}" — s'inscrit en parfaite cohérence avec mes compétences techniques et mes aspirations professionnelles. Intégrer ${companyName} pour mon PFE représente l'opportunité idéale d'apporter ma rigueur d'ingénieur tout en apprenant au contact de vos équipes d'experts.
+The team's mission — "${primaryItem.internship.mission_principale}" — directly aligns with my technical background and professional goals. Joining ${companyName} represents an ideal environment to contribute rigorous engineering work while learning from your world-class team.
 
-Je me tiens à votre entière disposition pour convenir d'un échange afin de vous détailler mes réalisations et ma motivation.
+I would welcome the opportunity to discuss my background and how I can deliver value to your team during this internship.
 
-Je vous prie d'agréer, Madame, Monsieur, l'expression de mes salutations distinguées.
+Thank you for your time and consideration.
 
-Alexandre Dupont`;
+Sincerely,
+Alex Dupont`;
 
-  // Formatted Cold Application Email Body
-  const emailBody = `Bonjour à l'équipe recrutement de ${companyName},
+  const emailBody = `Hi ${companyName} Recruiting Team,
 
-Étudiant en dernière année d'école d'ingénieur (Bac+5), je vous contacte pour postuler au stage de fin d'études :
+I am a final-year Computer Science engineering student reaching out to apply for the graduation internship position:
 "${roleTitle}" (${duration}, ${location}).
 
-Fort de mes réalisations sur la stack ${allTechs.slice(0, 5).join(", ")}, j'ai particulièrement apprécié l'orientation technique de votre équipe autour de :
+With hands-on experience building distributed systems in ${allTechs.slice(0, 5).join(", ")}, I was particularly drawn to your team's technical focus on:
 "${primaryItem.internship.mission_principale}"
 
 ${
   sendCV && sendCoverLetter
-    ? "Vous trouverez ci-joint mon CV ainsi que ma Lettre de Motivation spécialement préparés pour ce rôle."
+    ? "Attached please find my tailored Resume and Cover Letter for this role."
     : sendCV
-    ? "Vous trouverez ci-joint mon CV actualisé et calibré pour cette mission."
-    : "Vous trouverez ci-joint ma Lettre de Motivation détaillée."
+    ? "Attached please find my tailored Resume for this role."
+    : "Attached please find my Cover Letter detailing my background and motivation."
 }
 
-Seriez-vous disponible cette semaine pour un court échange téléphonique (15 min) afin de discuter de cette opportunité ?
+Would you be open to a brief 15-minute introductory call this week to explore how my background fits your team?
 
-Bien cordialement,
-Alexandre Dupont
-Élève-Ingénieur en Informatique
-+33 6 12 34 56 78 | alexandre.dupont@insa.fr
-Portfolio / GitHub : github.com/alexandre-dupont`;
+Best regards,
+Alex Dupont
+CS Engineering Student
++1 (555) 019-2834 | alex.dupont@university.edu
+Portfolio / GitHub: github.com/alex-dupont`;
 
   const handleCopyEmail = () => {
     navigator.clipboard.writeText(
-      `À : ${companyEmail}\nObjet : ${emailSubject}\n\n${emailBody}`
+      `To: ${companyEmail}\nSubject: ${emailSubject}\n\n${emailBody}`
     );
     setCopiedEmail(true);
     setTimeout(() => setCopiedEmail(false), 2000);
   };
 
-  // When send is clicked: trigger callback and close drawer automatically!
   const handleDispatchEmail = () => {
     if (onSendApplication) {
       onSendApplication({
@@ -114,12 +105,11 @@ Portfolio / GitHub : github.com/alexandre-dupont`;
         companyEmail,
         roleTitle,
         attachments: [
-          ...(sendCV ? ["CV"] : []),
-          ...(sendCoverLetter ? ["Lettre de Motivation"] : []),
+          ...(sendCV ? ["Resume"] : []),
+          ...(sendCoverLetter ? ["Cover Letter"] : []),
         ],
       });
     }
-    // Close the window automatically as requested
     onClose();
   };
 
@@ -146,7 +136,7 @@ Portfolio / GitHub : github.com/alexandre-dupont`;
 
           <div className="flex items-center gap-2">
             <span className="font-mono text-[10px] font-bold px-2 py-0.5 bg-[#C8F560] text-[#1E2129] border border-[#1E2129]">
-              {selectedInternships.length} PFE CIBLÉ(S)
+              {selectedInternships.length} TARGETED POSITION(S)
             </span>
             <button
               onClick={onClose}
@@ -167,10 +157,10 @@ Portfolio / GitHub : github.com/alexandre-dupont`;
                   <PixelCatMascot size={22} />
                   <div>
                     <h2 className="font-sans text-base font-extrabold text-[#1E2129] leading-tight">
-                      Dossier de Candidature Sur Mesure
+                      Tailored Application Package
                     </h2>
                     <p className="font-sans text-xs text-[#5B6170]">
-                      Généré pour : <strong>{companyName}</strong> ({roleTitle})
+                      Generated for: <strong>{companyName}</strong> ({roleTitle})
                     </p>
                   </div>
                 </div>
@@ -186,7 +176,7 @@ Portfolio / GitHub : github.com/alexandre-dupont`;
                         : "text-[#5B6170] hover:text-[#1E2129]"
                     }`}
                   >
-                    CV
+                    Resume
                   </button>
                   <button
                     type="button"
@@ -197,244 +187,244 @@ Portfolio / GitHub : github.com/alexandre-dupont`;
                         : "text-[#5B6170] hover:text-[#1E2129]"
                     }`}
                   >
-                    Lettre de Motivation
+                    Cover Letter
                   </button>
                 </div>
               </div>
 
-              {/* What to Send Selector: Choose CV, Cover letter, or both */}
-              <div className="p-3 border-2 border-[#1E2129] bg-white shadow-[2px_2px_0px_#1E2129] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                <span className="font-mono text-xs font-bold uppercase tracking-tight text-[#1E2129]">
-                  Documents à envoyer :
+              {/* Checkboxes: Choose What To Send */}
+              <div className="p-3 border-2 border-[#1E2129] bg-white shadow-[3px_3px_0px_#1E2129]">
+                <span className="font-mono text-[11px] font-bold uppercase tracking-wider text-[#5B6170] block mb-2">
+                  Choose what to attach in application:
                 </span>
 
-                <div className="flex items-center gap-3">
-                  <label className="inline-flex items-center gap-2 text-xs font-sans font-bold text-[#1E2129] cursor-pointer select-none">
+                <div className="flex flex-wrap items-center gap-6">
+                  <label className="flex items-center gap-2 cursor-pointer select-none">
                     <input
                       type="checkbox"
                       checked={sendCV}
                       onChange={(e) => setSendCV(e.target.checked)}
-                      className="sr-only peer"
+                      className="w-4 h-4 accent-[#1E2129] rounded-none border-2 border-[#1E2129] cursor-pointer"
                     />
-                    <div className="w-4 h-4 border-2 border-[#1E2129] bg-white shadow-[1px_1px_0px_#1E2129] peer-checked:bg-[#3F86F7] peer-checked:text-white flex items-center justify-center transition-all">
-                      {sendCV && <PixelCheckIcon size={12} className="text-white" />}
-                    </div>
-                    <span>CV</span>
+                    <span className="font-sans text-xs font-bold text-[#1E2129]">
+                      Attach Tailored Resume (CV)
+                    </span>
                   </label>
 
-                  <label className="inline-flex items-center gap-2 text-xs font-sans font-bold text-[#1E2129] cursor-pointer select-none">
+                  <label className="flex items-center gap-2 cursor-pointer select-none">
                     <input
                       type="checkbox"
                       checked={sendCoverLetter}
                       onChange={(e) => setSendCoverLetter(e.target.checked)}
-                      className="sr-only peer"
+                      className="w-4 h-4 accent-[#1E2129] rounded-none border-2 border-[#1E2129] cursor-pointer"
                     />
-                    <div className="w-4 h-4 border-2 border-[#1E2129] bg-white shadow-[1px_1px_0px_#1E2129] peer-checked:bg-[#3F86F7] peer-checked:text-white flex items-center justify-center transition-all">
-                      {sendCoverLetter && <PixelCheckIcon size={12} className="text-white" />}
-                    </div>
-                    <span>Cover Letter</span>
+                    <span className="font-sans text-xs font-bold text-[#1E2129]">
+                      Attach Cover Letter
+                    </span>
                   </label>
-
-                  <span className="text-[11px] font-mono text-[#5B6170]">
-                    ({sendCV && sendCoverLetter ? "Les 2 sélectionnés" : sendCV ? "CV uniquement" : sendCoverLetter ? "Lettre uniquement" : "Aucun"})
-                  </span>
                 </div>
               </div>
             </div>
 
-            {/* Document Preview Container (Scrollable) */}
-            <div className="flex-1 overflow-y-auto p-5 sm:p-7 space-y-6 text-[#1E2129]">
+            {/* Scrollable Document Content */}
+            <div className="flex-1 overflow-y-auto p-4 sm:p-6 bg-[#F2F0EA]">
               {activeTab === "cv" ? (
-                /* CV Sheet */
-                <div className="border-2 border-[#1E2129] bg-[#FAF9F5] p-5 sm:p-6 shadow-[4px_4px_0px_#1E2129] space-y-5">
-                  <div className="border-b-2 border-[#1E2129] pb-3 flex items-center justify-between">
-                    <div>
-                      <h3 className="text-xl font-extrabold tracking-tight">Alexandre Dupont</h3>
-                      <p className="text-xs font-bold text-[#3F86F7]">
-                        Élève-Ingénieur en Informatique — Recherche PFE ({duration})
-                      </p>
+                /* Resume Document Preview */
+                <div className="border-2 border-[#1E2129] bg-white shadow-[6px_6px_0px_#1E2129] p-6 space-y-6">
+                  {/* CV Header */}
+                  <div className="border-b-2 border-[#1E2129] pb-4">
+                    <div className="flex items-start justify-between gap-4">
+                      <div>
+                        <h1 className="font-sans text-2xl font-black text-[#1E2129] tracking-tight">
+                          ALEX DUPONT
+                        </h1>
+                        <p className="font-mono text-xs font-bold text-[#3F86F7] uppercase mt-0.5">
+                          Software Engineer Intern — Core & Distributed Systems
+                        </p>
+                      </div>
+                      <div className="text-right font-mono text-[11px] text-[#5B6170]">
+                        <p>alex.dupont@university.edu</p>
+                        <p>+1 (555) 019-2834</p>
+                        <p>github.com/alex-dupont</p>
+                      </div>
                     </div>
-                    <span className="font-mono text-[11px] px-2 py-0.5 bg-[#E8E5DC] border border-[#1E2129]">
-                      PARIS / REMOTE
-                    </span>
                   </div>
 
+                  {/* Tailored Profile Summary */}
                   <div>
-                    <h4 className="font-mono text-xs font-bold uppercase tracking-wider text-[#1E2129] bg-[#E8E5DC] px-2 py-0.5 inline-block border border-[#1E2129] mb-1.5">
-                      Objectif PFE
-                    </h4>
-                    <p className="text-xs text-[#1E2129] leading-relaxed">
-                      Candidature ciblée chez <strong>{companyName}</strong> sur le sujet &quot;{roleTitle}&quot;.
-                      Volonté d&apos;apporter mon expertise en {allTechs.slice(0, 4).join(", ")} pour relever les défis de votre équipe.
+                    <h2 className="font-mono text-xs font-bold uppercase tracking-wider text-[#1E2129] mb-1.5 flex items-center gap-2">
+                      <span className="w-2 h-2 bg-[#1E2129]" />
+                      Executive Summary
+                    </h2>
+                    <p className="font-sans text-xs text-[#5B6170] leading-relaxed">
+                      Final-year Computer Science engineering student targeting graduation internship at{" "}
+                      <strong>{companyName}</strong>. Specialized in high-performance backends, distributed data pipelines, and scalable cloud architectures. Passionate about solving real-world latency challenges.
                     </p>
                   </div>
 
+                  {/* Skills Grid */}
                   <div>
-                    <h4 className="font-mono text-xs font-bold uppercase tracking-wider text-[#1E2129] bg-[#E8E5DC] px-2 py-0.5 inline-block border border-[#1E2129] mb-2">
-                      Stack Technique Spécifique
-                    </h4>
+                    <h2 className="font-mono text-xs font-bold uppercase tracking-wider text-[#1E2129] mb-2 flex items-center gap-2">
+                      <span className="w-2 h-2 bg-[#3F86F7]" />
+                      Key Skills Aligned with {companyName}
+                    </h2>
                     <div className="flex flex-wrap gap-1.5">
                       {allTechs.map((tech) => (
                         <span
                           key={tech}
                           className="font-mono text-xs font-bold px-2 py-0.5 bg-[#C8F560] text-[#1E2129] border border-[#1E2129]"
                         >
-                          ✓ {tech}
+                          {tech}
                         </span>
                       ))}
                     </div>
                   </div>
 
+                  {/* Experience & Projects */}
                   <div>
-                    <h4 className="font-mono text-xs font-bold uppercase tracking-wider text-[#1E2129] bg-[#E8E5DC] px-2 py-0.5 inline-block border border-[#1E2129] mb-2">
-                      Projet Alignant la Mission
-                    </h4>
-                    <div className="border border-[#1E2129] p-3 bg-white">
-                      <p className="font-bold text-xs mb-1">Système Distribué & Traitement Concurant</p>
-                      <p className="text-xs text-[#5B6170] leading-relaxed">
-                        Conception et benchmarking d&apos;un module haute performance. Optimisation des temps de réponse et résilience réseau.
-                      </p>
+                    <h2 className="font-mono text-xs font-bold uppercase tracking-wider text-[#1E2129] mb-2 flex items-center gap-2">
+                      <span className="w-2 h-2 bg-[#10B981]" />
+                      Relevant Engineering Projects
+                    </h2>
+                    <div className="space-y-3 font-sans text-xs">
+                      <div className="border border-[#1E2129]/20 p-3 bg-[#FAF9F5]">
+                        <div className="flex justify-between font-bold text-[#1E2129] mb-1">
+                          <span>High-Throughput Streaming Engine</span>
+                          <span className="font-mono text-[10px] text-[#5B6170]">2025</span>
+                        </div>
+                        <p className="text-[#5B6170] leading-snug">
+                          Built a streaming pipeline processing 100K+ events/sec with zero-copy deserialization. Deployed with automated health metrics and horizontal auto-scaling.
+                        </p>
+                      </div>
                     </div>
                   </div>
                 </div>
               ) : (
-                /* Cover Letter Sheet */
-                <div className="border-2 border-[#1E2129] bg-[#FAF9F5] p-5 sm:p-6 shadow-[4px_4px_0px_#1E2129]">
-                  <div className="border-b-2 border-[#1E2129] pb-3 mb-4 flex items-center justify-between">
-                    <span className="font-mono text-xs font-bold uppercase text-[#3F86F7]">
-                      Lettre de Motivation Personnalisée
-                    </span>
-                    <span className="font-mono text-[11px] text-[#5B6170]">
-                      {companyName}
-                    </span>
-                  </div>
-                  <pre className="font-sans text-xs text-[#1E2129] leading-relaxed whitespace-pre-wrap font-normal">
+                /* Cover Letter Document Preview */
+                <div className="border-2 border-[#1E2129] bg-white shadow-[6px_6px_0px_#1E2129] p-6">
+                  <div className="font-mono text-xs text-[#1E2129] leading-relaxed whitespace-pre-wrap">
                     {coverLetterText}
-                  </pre>
+                  </div>
                 </div>
               )}
             </div>
 
-            {/* Step 1 Footer: Done Button */}
-            <div className="p-4 border-t-2 border-[#1E2129] bg-[#E8E5DC] shrink-0 flex items-center justify-between gap-3">
-              <span className="font-mono text-xs text-[#5B6170]">
-                {sendCV || sendCoverLetter
-                  ? "Prêt pour la génération de l'email"
-                  : "Veuillez cocher au moins un document"}
-              </span>
+            {/* Bottom Navigation */}
+            <div className="p-4 border-t-2 border-[#1E2129] bg-white shrink-0 flex items-center justify-between gap-3">
+              <button
+                type="button"
+                onClick={onClose}
+                className="font-mono text-xs font-bold px-4 py-2 border-2 border-[#1E2129] bg-white text-[#5B6170] hover:text-[#1E2129] hover:bg-[#FAF9F5] cursor-pointer"
+              >
+                Close
+              </button>
 
               <button
                 type="button"
                 disabled={!sendCV && !sendCoverLetter}
                 onClick={() => setCurrentStep("email")}
-                className="inline-flex items-center gap-2 font-sans font-bold text-xs sm:text-sm uppercase tracking-tight px-6 py-2.5 bg-[#1E2129] text-[#F2F0EA] border-2 border-[#1E2129] shadow-[4px_4px_0px_#3F86F7] hover:translate-x-[-1px] hover:translate-y-[-1px] hover:shadow-[6px_6px_0px_#3F86F7] active:translate-x-[1px] active:translate-y-[1px] disabled:opacity-50 disabled:cursor-not-allowed transition-all cursor-pointer"
+                className="inline-flex items-center gap-2 font-sans font-bold text-xs uppercase px-5 py-2.5 bg-[#1E2129] text-[#F2F0EA] border-2 border-[#1E2129] shadow-[3px_3px_0px_#3F86F7] hover:translate-x-[-1px] hover:translate-y-[-1px] hover:shadow-[5px_5px_0px_#3F86F7] active:translate-x-[1px] active:translate-y-[1px] disabled:opacity-50 disabled:cursor-not-allowed transition-all cursor-pointer"
               >
-                <span>Done (Voir l&apos;Email de Candidature)</span>
+                <span>Done: Review Email</span>
                 <PixelArrowRightIcon size={14} />
               </button>
             </div>
           </>
         ) : (
-          /* STEP 2: EMAIL PREVIEW & DISPATCH SCREEN (SHOWN WHEN DONE IS CLICKED) */
+          /* STEP 2: PREPARED EMAIL PREVIEW */
           <>
-            {/* Header info */}
             <div className="p-4 sm:p-5 border-b-2 border-[#1E2129]/15 bg-[#FAF9F5] shrink-0">
-              <div className="flex items-center justify-between mb-2">
+              <div className="flex items-center justify-between gap-3 mb-2">
                 <div className="flex items-center gap-2">
-                  <span className="w-2.5 h-2.5 bg-[#10B981] inline-block" />
-                  <h2 className="font-sans text-base font-extrabold text-[#1E2129]">
-                    Email de Candidature Prêt à l&apos;Envoi
-                  </h2>
+                  <div className="w-8 h-8 bg-[#C8F560] border-2 border-[#1E2129] flex items-center justify-center font-bold shadow-[2px_2px_0px_#1E2129]">
+                    <PixelMailIcon size={16} />
+                  </div>
+                  <div>
+                    <h2 className="font-sans text-base font-extrabold text-[#1E2129] leading-tight">
+                      Recruiter Email Preview
+                    </h2>
+                    <p className="font-sans text-xs text-[#5B6170]">
+                      Ready for dispatch to <strong>{companyName}</strong>
+                    </p>
+                  </div>
                 </div>
+
                 <button
                   type="button"
                   onClick={() => setCurrentStep("materials")}
                   className="font-mono text-xs font-bold text-[#3F86F7] hover:underline cursor-pointer"
                 >
-                  &larr; Modifier les documents
+                  ← Edit attachments
                 </button>
               </div>
-              <p className="font-sans text-xs text-[#5B6170]">
-                Généré automatiquement par l&apos;agent Auto-Intern avec les pièces jointes choisies.
-              </p>
-            </div>
 
-            {/* Email Inspection Terminal Body */}
-            <div className="flex-1 overflow-y-auto p-5 sm:p-7 space-y-4">
-              <div className="border-2 border-[#1E2129] bg-white shadow-[4px_4px_0px_#1E2129] divide-y-2 divide-[#1E2129]/15">
-                {/* Field: To / Recruiter Email */}
-                <div className="p-3.5 flex flex-col sm:flex-row sm:items-center gap-2">
-                  <span className="font-mono text-xs font-bold text-[#5B6170] uppercase w-28 shrink-0">
-                    Destinataire :
-                  </span>
-                  <div className="flex items-center gap-2 flex-1">
-                    <span className="font-mono text-xs font-bold text-[#1E2129] bg-[#FAF9F5] px-2.5 py-1 border border-[#1E2129] break-all">
-                      {companyEmail}
-                    </span>
-                    <span className="font-mono text-[10px] px-1.5 py-0.5 bg-[#C8F560] text-[#1E2129] border border-[#1E2129] shrink-0">
-                      VÉRIFIÉ
-                    </span>
-                  </div>
+              {/* Email Meta Bar */}
+              <div className="border-2 border-[#1E2129] bg-white divide-y-2 divide-[#1E2129]/15 font-mono text-xs">
+                <div className="px-3 py-2 flex items-center gap-2">
+                  <span className="font-bold text-[#5B6170] w-14 shrink-0 uppercase">TO:</span>
+                  <span className="font-bold text-[#1E2129] select-all truncate">{companyEmail}</span>
                 </div>
-
-                {/* Field: Subject */}
-                <div className="p-3.5 flex flex-col sm:flex-row sm:items-center gap-2">
-                  <span className="font-mono text-xs font-bold text-[#5B6170] uppercase w-28 shrink-0">
-                    Objet :
-                  </span>
-                  <span className="font-sans text-xs font-extrabold text-[#1E2129] bg-[#FAF9F5] px-2.5 py-1 border border-[#1E2129] flex-1">
-                    {emailSubject}
-                  </span>
+                <div className="px-3 py-2 flex items-center gap-2">
+                  <span className="font-bold text-[#5B6170] w-14 shrink-0 uppercase">SUBJECT:</span>
+                  <span className="font-bold text-[#1E2129] select-all truncate">{emailSubject}</span>
                 </div>
-
-                {/* Field: Attachments */}
-                <div className="p-3.5 flex flex-col sm:flex-row sm:items-center gap-2">
-                  <span className="font-mono text-xs font-bold text-[#5B6170] uppercase w-28 shrink-0">
-                    Pièces Jointes :
-                  </span>
-                  <div className="flex flex-wrap items-center gap-2 flex-1">
+                <div className="px-3 py-2 flex items-center gap-2 bg-[#FAF9F5]">
+                  <span className="font-bold text-[#5B6170] w-14 shrink-0 uppercase">ATTACH:</span>
+                  <div className="flex gap-2">
                     {sendCV && (
-                      <span className="font-mono text-xs font-bold px-2 py-0.5 bg-[#E8E5DC] text-[#1E2129] border border-[#1E2129]">
-                        📎 CV_Alexandre_Dupont.pdf
+                      <span className="px-1.5 py-0.5 bg-[#C8F560] text-[#1E2129] border border-[#1E2129] font-bold text-[10px]">
+                        ✓ Resume_Alex_Dupont.pdf
                       </span>
                     )}
                     {sendCoverLetter && (
-                      <span className="font-mono text-xs font-bold px-2 py-0.5 bg-[#E8E5DC] text-[#1E2129] border border-[#1E2129]">
-                        📎 Lettre_Motivation_${companyName}.pdf
+                      <span className="px-1.5 py-0.5 bg-[#C8F560] text-[#1E2129] border border-[#1E2129] font-bold text-[10px]">
+                        ✓ Cover_Letter_{companyName}.pdf
                       </span>
                     )}
                   </div>
                 </div>
+              </div>
+            </div>
 
-                {/* Field: Email Body Content */}
-                <div className="p-4 space-y-2 bg-[#FAF9F5]">
-                  <span className="font-mono text-xs font-bold text-[#5B6170] uppercase block">
-                    Contenu du Message :
+            {/* Email Body Preview */}
+            <div className="flex-1 overflow-y-auto p-4 sm:p-6 bg-[#F2F0EA]">
+              <div className="border-2 border-[#1E2129] bg-white shadow-[6px_6px_0px_#1E2129] p-5 sm:p-6">
+                <div className="flex items-center justify-between mb-4 pb-3 border-b-2 border-[#1E2129]/15">
+                  <span className="font-mono text-[11px] font-bold uppercase text-[#5B6170]">
+                    Message Body
                   </span>
-                  <pre className="font-sans text-xs sm:text-sm text-[#1E2129] leading-relaxed whitespace-pre-wrap font-normal bg-white p-4 border border-[#1E2129] shadow-inner">
-                    {emailBody}
-                  </pre>
+                  <button
+                    type="button"
+                    onClick={handleCopyEmail}
+                    className="font-mono text-xs font-bold text-[#3F86F7] hover:underline cursor-pointer"
+                  >
+                    {copiedEmail ? "✓ Copied to clipboard!" : "Copy text"}
+                  </button>
+                </div>
+
+                <div className="font-sans text-xs sm:text-sm text-[#1E2129] leading-relaxed whitespace-pre-wrap">
+                  {emailBody}
                 </div>
               </div>
             </div>
 
-            {/* Step 2 Footer: Action Buttons */}
-            <div className="p-4 border-t-2 border-[#1E2129] bg-[#E8E5DC] shrink-0 flex flex-wrap items-center justify-between gap-3">
+            {/* Final Dispatch Button */}
+            <div className="p-4 border-t-2 border-[#1E2129] bg-white shrink-0 flex items-center justify-between gap-3">
               <button
                 type="button"
-                onClick={handleCopyEmail}
-                className="font-mono text-xs font-bold px-3.5 py-2 border-2 border-[#1E2129] bg-white text-[#1E2129] hover:bg-[#FAF9F5] cursor-pointer"
+                onClick={() => setCurrentStep("materials")}
+                className="font-mono text-xs font-bold px-4 py-2 border-2 border-[#1E2129] bg-white text-[#5B6170] hover:text-[#1E2129] hover:bg-[#FAF9F5] cursor-pointer"
               >
-                {copiedEmail ? "✓ Email Copié !" : "Copier le Texte de l'Email"}
+                ← Back
               </button>
 
               <button
                 type="button"
                 onClick={handleDispatchEmail}
-                className="inline-flex items-center gap-2 font-sans font-bold text-xs sm:text-sm uppercase tracking-tight px-6 py-2.5 bg-[#1E2129] text-[#F2F0EA] border-2 border-[#1E2129] shadow-[4px_4px_0px_#3F86F7] hover:translate-x-[-1px] hover:translate-y-[-1px] hover:shadow-[6px_6px_0px_#3F86F7] active:translate-x-[1px] active:translate-y-[1px] transition-all cursor-pointer"
+                className="inline-flex items-center gap-2 font-sans font-extrabold text-xs sm:text-sm uppercase tracking-tight px-6 py-3 bg-[#10B981] text-[#1E2129] border-2 border-[#1E2129] shadow-[4px_4px_0px_#1E2129] hover:translate-x-[-1px] hover:translate-y-[-1px] hover:shadow-[6px_6px_0px_#1E2129] active:translate-x-[1px] active:translate-y-[1px] transition-all cursor-pointer"
               >
                 <PixelMailIcon size={16} />
-                <span>Envoyer la Candidature</span>
+                <span>Send Application Now</span>
               </button>
             </div>
           </>

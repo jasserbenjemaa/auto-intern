@@ -23,6 +23,7 @@ export interface Company {
   location: string;
   tagline: string;
   internships: Internship[];
+  added_date?: string;
 }
 
 export const MOCK_COMPANIES: Company[] = [
@@ -34,6 +35,7 @@ export const MOCK_COMPANIES: Company[] = [
     workplace_type: "Hybrid",
     location: "Paris, France",
     tagline: "Cloud monitoring & security platform",
+    added_date: "Nov 12, 2026",
     internships: [
       {
         id: "dd-01",
@@ -79,6 +81,7 @@ export const MOCK_COMPANIES: Company[] = [
     workplace_type: "Hybrid",
     location: "Levallois-Perret, France",
     tagline: "Next-gen healthcare booking and teleconsultation",
+    added_date: "Nov 10, 2026",
     internships: [
       {
         id: "dl-01",
@@ -124,6 +127,7 @@ export const MOCK_COMPANIES: Company[] = [
     workplace_type: "On site",
     location: "Tunis, Tunisie",
     tagline: "Decision-Making AI and Deep Reinforcement Learning",
+    added_date: "Nov 8, 2026",
     internships: [
       {
         id: "id-01",
@@ -169,6 +173,7 @@ export const MOCK_COMPANIES: Company[] = [
     workplace_type: "Remote",
     location: "Paris / Full Remote (France & Europe)",
     tagline: "The healthcare super-app for individuals & companies",
+    added_date: "Nov 5, 2026",
     internships: [
       {
         id: "al-01",
@@ -197,6 +202,7 @@ export const MOCK_COMPANIES: Company[] = [
     workplace_type: "Hybrid",
     location: "Paris, France",
     tagline: "Leading business finance management solution",
+    added_date: "Nov 3, 2026",
     internships: [
       {
         id: "qo-01",
@@ -242,6 +248,7 @@ export const MOCK_COMPANIES: Company[] = [
     workplace_type: "Hybrid",
     location: "Paris, France",
     tagline: "France's #1 peer-to-peer marketplace & classifieds",
+    added_date: "Oct 28, 2026",
     internships: [
       {
         id: "lbc-01",

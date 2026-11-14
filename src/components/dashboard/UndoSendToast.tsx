@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { PixelMailIcon, PixelCheckIcon } from "@/components/icons/PixelIcons";
+import { PixelMailIcon } from "@/components/icons/PixelIcons";
 
 export interface SentApplicationInfo {
   companyName: string;
@@ -56,14 +56,14 @@ export function UndoSendToast({
             <div>
               <div className="flex items-center gap-2 mb-0.5">
                 <span className="font-sans text-sm font-extrabold text-[#1E2129]">
-                  Candidature Envoyée !
+                  Application Sent!
                 </span>
                 <span className="font-mono text-[10px] font-bold px-1.5 py-0.2 bg-[#C8F560] text-[#1E2129] border border-[#1E2129]">
                   {timeLeft}s
                 </span>
               </div>
               <p className="font-sans text-xs text-[#5B6170] leading-snug">
-                Email dispatché à <strong>{info.companyEmail}</strong> pour le poste{" "}
+                Dispatched to <strong>{info.companyEmail}</strong> for the role{" "}
                 <em>&quot;{info.roleTitle}&quot;</em>.
               </p>
             </div>
@@ -81,7 +81,7 @@ export function UndoSendToast({
         {/* Action Bar */}
         <div className="px-4 py-2.5 bg-white flex items-center justify-between gap-3">
           <span className="font-mono text-[11px] text-[#5B6170]">
-            Pièces : {info.attachments.join(" + ")}
+            Files: {info.attachments.join(" + ")}
           </span>
 
           <button
@@ -89,7 +89,7 @@ export function UndoSendToast({
             onClick={onUndo}
             className="inline-flex items-center gap-1.5 font-sans font-bold text-xs uppercase tracking-tight px-3 py-1.5 bg-[#E5484D] text-white border-2 border-[#1E2129] shadow-[2px_2px_0px_#1E2129] hover:translate-x-[-1px] hover:translate-y-[-1px] hover:shadow-[3px_3px_0px_#1E2129] active:translate-x-[1px] active:translate-y-[1px] transition-all cursor-pointer"
           >
-            <span>Annuler l&apos;envoi ({timeLeft}s)</span>
+            <span>Undo Send ({timeLeft}s)</span>
           </button>
         </div>
 

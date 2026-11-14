@@ -1,14 +1,13 @@
 "use client";
 
 import React, { useState } from "react";
-import Link from "next/link";
 import { Company } from "@/data/mockInternships";
-import { PixelCatMascot } from "@/components/icons/PixelCatMascot";
 
 interface CompanySidebarProps {
   companies: Company[];
   selectedCompanyId: string;
   onSelectCompany: (companyId: string) => void;
+  onOpenAddCompany?: () => void;
   isOpenMobile?: boolean;
   onCloseMobile?: () => void;
 }
@@ -17,6 +16,7 @@ export function CompanySidebar({
   companies,
   selectedCompanyId,
   onSelectCompany,
+  onOpenAddCompany,
   isOpenMobile = false,
   onCloseMobile,
 }: CompanySidebarProps) {
@@ -32,63 +32,58 @@ export function CompanySidebar({
     return matchesSearch && matchesType;
   });
 
+  const totalInternships = companies.reduce(
+    (acc, curr) => acc + curr.internships.length,
+    0
+  );
+
   return (
     <>
       {/* Mobile Backdrop Overlay */}
       {isOpenMobile && (
         <div
           onClick={onCloseMobile}
-          className="fixed inset-0 bg-[#1E2129]/60 backdrop-blur-xs z-40 lg:hidden"
+          className="fixed inset-0 bg-[#1E2129]/60 backdrop-blur-xs z-50 lg:hidden"
         />
       )}
 
-      {/* Fixed Full-Height Left Sidebar */}
+      {/* Left Sidebar (Desktop: flush below 72px top bar; Mobile: full-height slide-over) */}
       <aside
-        className={`fixed top-0 bottom-0 left-0 z-50 w-80 sm:w-84 h-screen bg-white border-r-2 border-[#1E2129] flex flex-col transition-transform duration-200 ease-in-out ${
-          isOpenMobile ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
+        className={`fixed left-0 w-80 bg-white border-r-2 border-[#1E2129] flex flex-col transition-transform duration-200 ease-in-out ${
+          isOpenMobile
+            ? "top-0 bottom-0 z-50 translate-x-0 shadow-[8px_0px_0px_#1E2129]"
+            : "top-[72px] bottom-0 z-30 -translate-x-full lg:translate-x-0"
         }`}
       >
-        {/* Top Brand & Traffic Light Header */}
+        {/* Sidebar Header: Search & Filters (Clean, no duplicate top add button) */}
         <div className="p-4 border-b-2 border-[#1E2129] bg-[#E8E5DC] shrink-0">
-          <div className="flex items-center justify-between mb-3">
-            <Link href="/" className="flex items-center gap-2 group">
-              <PixelCatMascot size={22} className="text-[#1E2129] group-hover:scale-105 transition-transform" />
-              <span className="font-pixel text-[14px] font-bold text-[#1E2129] tracking-tight uppercase">
-                Auto-Intern
-              </span>
-            </Link>
-
-            {/* Mobile close button */}
+          <div className="flex items-center justify-between mb-2.5">
             <div className="flex items-center gap-2">
-              <span className="font-mono text-[10px] font-bold px-1.5 py-0.5 bg-[#C8F560] text-[#1E2129] border border-[#1E2129]">
-                PFE 2026
+              <span className="w-2.5 h-2.5 bg-[#3F86F7] border border-[#1E2129] inline-block shadow-[1px_1px_0px_#1E2129]" />
+              <span className="font-mono text-xs font-bold uppercase tracking-tight text-[#1E2129]">
+                Companies
               </span>
+              <span className="font-mono text-[10px] font-bold px-1.5 py-0.2 bg-[#C8F560] text-[#1E2129] border border-[#1E2129]">
+                {filteredCompanies.length}/{companies.length}
+              </span>
+            </div>
+
+            <div className="flex items-center gap-1.5">
+              <span className="font-mono text-[10px] text-[#5B6170]">
+                {totalInternships} Offers
+              </span>
+
               {onCloseMobile && (
                 <button
                   type="button"
                   onClick={onCloseMobile}
-                  className="lg:hidden font-mono text-xs font-bold px-2 py-0.5 bg-white border border-[#1E2129] text-[#1E2129]"
+                  className="lg:hidden font-mono text-xs font-bold px-2 py-0.5 bg-white border border-[#1E2129] text-[#1E2129] cursor-pointer hover:bg-[#FAF9F5]"
+                  aria-label="Close"
                 >
                   ✕
                 </button>
               )}
             </div>
-          </div>
-
-          {/* Directory Title Bar with Traffic Lights */}
-          <div className="flex items-center justify-between mb-2.5 pt-1 border-t border-[#1E2129]/20">
-            <div className="flex items-center gap-1.5">
-              <span className="w-2.5 h-2.5 bg-[#E5484D] border border-[#1E2129]" />
-              <span className="w-2.5 h-2.5 bg-[#F5A623] border border-[#1E2129]" />
-              <span className="w-2.5 h-2.5 bg-[#C8F560] border border-[#1E2129]" />
-              <span className="font-mono text-[11px] font-bold uppercase tracking-tight text-[#1E2129] ml-1.5">
-                COMPANIES.DIR
-              </span>
-            </div>
-
-            <span className="font-mono text-[10px] text-[#5B6170]">
-              {filteredCompanies.length}/{companies.length} LISTED
-            </span>
           </div>
 
           {/* Search Input */}
@@ -118,11 +113,20 @@ export function CompanySidebar({
           </div>
         </div>
 
-        {/* Scrollable Companies List (takes all remaining height) */}
+        {/* Scrollable Companies List */}
         <div className="flex-1 overflow-y-auto divide-y-2 divide-[#1E2129]/15">
           {filteredCompanies.length === 0 ? (
-            <div className="p-6 text-center text-xs text-[#5B6170] font-mono">
-              No matching companies found.
+            <div className="p-6 text-center text-xs text-[#5B6170] font-mono space-y-3">
+              <p>No companies found.</p>
+              {onOpenAddCompany && (
+                <button
+                  type="button"
+                  onClick={onOpenAddCompany}
+                  className="font-mono text-xs font-bold uppercase px-3 py-1.5 bg-[#1E2129] text-[#F2F0EA] border-2 border-[#1E2129] shadow-[2px_2px_0px_#3F86F7] hover:bg-black cursor-pointer"
+                >
+                  + Add this company
+                </button>
+              )}
             </div>
           ) : (
             filteredCompanies.map((company) => {
@@ -173,33 +177,51 @@ export function CompanySidebar({
                       {company.location}
                     </p>
 
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center justify-between gap-2">
                       <span
                         className={`font-mono text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 border border-[#1E2129] ${workplaceBadgeBg}`}
                       >
                         {company.workplace_type}
                       </span>
+
+                      {company.added_date && (
+                        <span className="font-mono text-[10px] text-[#5B6170] truncate">
+                          {company.added_date}
+                        </span>
+                      )}
                     </div>
                   </div>
                 </button>
               );
             })
           )}
+
+          {/* Add Company Button at the end of the companies list */}
+          {onOpenAddCompany && (
+            <div className="p-3 bg-[#FAF9F5] border-t border-[#1E2129]/20">
+              <button
+                type="button"
+                onClick={onOpenAddCompany}
+                className="w-full py-2.5 px-3 font-mono text-xs font-bold uppercase tracking-tight bg-white hover:bg-[#FAF9F5] text-[#1E2129] border-2 border-dashed border-[#1E2129] hover:border-solid hover:shadow-[3px_3px_0px_#3F86F7] transition-all cursor-pointer flex items-center justify-center gap-2"
+              >
+                <span className="w-4 h-4 bg-[#C8F560] border border-[#1E2129] flex items-center justify-center font-bold text-xs text-[#1E2129]">
+                  +
+                </span>
+                <span>Add a company</span>
+              </button>
+            </div>
+          )}
         </div>
 
-        {/* Fixed Sidebar Bottom Status Footer */}
-        <div className="p-3 border-t-2 border-[#1E2129] bg-[#E8E5DC] shrink-0 flex items-center justify-between font-mono text-[11px] text-[#5B6170]">
+        {/* Sidebar Footer */}
+        <div className="p-3 border-t-2 border-[#1E2129] bg-[#E8E5DC] shrink-0 flex items-center justify-between font-mono text-[10px] text-[#5B6170]">
           <span className="flex items-center gap-1.5">
-            <span className="w-2 h-2 bg-[#10B981] inline-block" />
+            <span className="w-1.5 h-1.5 bg-[#10B981] inline-block" />
             <span className="font-bold text-[#1E2129]">CADET PORTAL</span>
           </span>
-
-          <Link
-            href="/"
-            className="text-[#1E2129] font-bold hover:underline flex items-center gap-1"
-          >
-            <span>&larr; Home</span>
-          </Link>
+          <span className="font-mono text-[10px] font-bold px-1.5 py-0.5 bg-[#C8F560] text-[#1E2129] border border-[#1E2129]">
+            {totalInternships} TOTAL OFFERS
+          </span>
         </div>
       </aside>
     </>
