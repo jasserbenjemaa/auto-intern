@@ -15,7 +15,8 @@
 /.agent
 # testing
 /coverage
-
+DESIGN.md 
+PRODUCT.md 
 # next.js
 /.next/
 /out/
